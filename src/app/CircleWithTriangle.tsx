@@ -70,6 +70,37 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
     setDraggingIndex(null);
   };
 
+  // Calculate incenter
+  const calculateIncenter = () => {
+    const [A, B, C] = points;
+    const a = Math.sqrt((B.x - C.x) ** 2 + (B.y - C.y) ** 2);
+    const b = Math.sqrt((A.x - C.x) ** 2 + (A.y - C.y) ** 2);
+    const c = Math.sqrt((A.x - B.x) ** 2 + (A.y - B.y) ** 2);
+    const perimeter = a + b + c;
+
+    const incenterX = (a * A.x + b * B.x + c * C.x) / perimeter;
+    const incenterY = (a * A.y + b * B.y + c * C.y) / perimeter;
+
+    return { x: incenterX, y: incenterY };
+  };
+
+  // Calculate inradius
+  const calculateInradius = () => {
+    const [A, B, C] = points;
+    const a = Math.sqrt((B.x - C.x) ** 2 + (B.y - C.y) ** 2);
+    const b = Math.sqrt((A.x - C.x) ** 2 + (A.y - C.y) ** 2);
+    const c = Math.sqrt((A.x - B.x) ** 2 + (A.y - B.y) ** 2);
+    const s = (a + b + c) / 2;
+
+    const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    const inradius = area / s;
+
+    return inradius;
+  };
+
+  const incenter = calculateIncenter();
+  const inradius = calculateInradius();
+
   return (
     <svg
       width={width}
@@ -96,6 +127,16 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
         fill="none"
       />
 
+      {/* Draw incircle */}
+      <circle
+        cx={incenter.x}
+        cy={incenter.y}
+        r={inradius}
+        stroke="black"
+        strokeWidth="2"
+        fill="none"
+      />
+
       {/* Draw points */}
       {points.map((point, index) => (
         <circle
@@ -103,7 +144,7 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
           cx={point.x}
           cy={point.y}
           r={draggingIndex === index ? 8 : hoverIndex === index ? 7 : 5}
-          fill={draggingIndex === index ? "orange" : "red"}
+          fill="red"
           onMouseDown={() => handleMouseDown(index)}
           onMouseEnter={() => setHoverIndex(index)}
           onMouseLeave={() => setHoverIndex(null)}
