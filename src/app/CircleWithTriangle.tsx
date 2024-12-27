@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 
 const CircleWithTriangle: React.FC = () => {
   // Circle properties
@@ -6,8 +8,8 @@ const CircleWithTriangle: React.FC = () => {
   const centerY = 200;
   const radius = 150;
 
-  // Calculate three points on the circle
-  const points = [
+  // Calculate initial positions of points
+  const initialPoints = [
     { x: centerX + radius * Math.cos(0), y: centerY + radius * Math.sin(0) },
     {
       x: centerX + radius * Math.cos((2 * Math.PI) / 3),
@@ -19,8 +21,55 @@ const CircleWithTriangle: React.FC = () => {
     },
   ];
 
+  // State to track point positions
+  const [points, setPoints] = useState(initialPoints);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+
+  // Handle mouse down event
+  const handleMouseDown = (index: number) => {
+    setDraggingIndex(index);
+  };
+
+  // Handle mouse move event
+  const handleMouseMove = (
+    event: React.MouseEvent<SVGSVGElement, MouseEvent>
+  ) => {
+    if (draggingIndex === null) return;
+
+    const { clientX, clientY } = event;
+    const svg = event.currentTarget;
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const cursor = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+
+    const dx = cursor.x - centerX;
+    const dy = cursor.y - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Calculate new position constrained to the circle radius
+    const newX = centerX + (radius * dx) / distance;
+    const newY = centerY + (radius * dy) / distance;
+
+    const updatedPoints = [...points];
+    updatedPoints[draggingIndex] = { x: newX, y: newY };
+    setPoints(updatedPoints);
+  };
+
+  // Handle mouse up event
+  const handleMouseUp = () => {
+    setDraggingIndex(null);
+  };
+
   return (
-    <svg width="400" height="400">
+    <svg
+      width="400"
+      height="400"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      className="bg-slate-100"
+    >
       {/* Draw circle */}
       <circle
         cx={centerX}
@@ -33,7 +82,14 @@ const CircleWithTriangle: React.FC = () => {
 
       {/* Draw points */}
       {points.map((point, index) => (
-        <circle key={index} cx={point.x} cy={point.y} r={5} fill="red" />
+        <circle
+          key={index}
+          cx={point.x}
+          cy={point.y}
+          r={5}
+          fill="red"
+          onMouseDown={() => handleMouseDown(index)}
+        />
       ))}
 
       {/* Draw triangle */}
