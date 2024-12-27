@@ -34,6 +34,9 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
+  // Control panel state
+  const [showTriangle, setShowTriangle] = useState(true);
+
   // Handle mouse down event
   const handleMouseDown = (index: number) => {
     setDraggingIndex(index);
@@ -102,55 +105,70 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
   const inradius = calculateInradius();
 
   return (
-    <svg
-      width={width}
-      height={height}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
-      {/* Draw circle */}
-      <circle
-        cx={centerX}
-        cy={centerY}
-        r={radius}
-        stroke="black"
-        strokeWidth="2"
-        fill="none"
-      />
-
-      {/* Draw triangle */}
-      <polygon
-        points={points.map((p) => `${p.x},${p.y}`).join(" ")}
-        stroke="blue"
-        strokeWidth="2"
-        fill="none"
-      />
-
-      {/* Draw incircle */}
-      <circle
-        cx={incenter.x}
-        cy={incenter.y}
-        r={inradius}
-        stroke="black"
-        strokeWidth="2"
-        fill="none"
-      />
-
-      {/* Draw points */}
-      {points.map((point, index) => (
+    <div>
+      <svg
+        width={width}
+        height={height}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
+        {/* Draw circle */}
         <circle
-          key={index}
-          cx={point.x}
-          cy={point.y}
-          r={draggingIndex === index ? 8 : hoverIndex === index ? 7 : 5}
-          fill="red"
-          onMouseDown={() => handleMouseDown(index)}
-          onMouseEnter={() => setHoverIndex(index)}
-          onMouseLeave={() => setHoverIndex(null)}
+          cx={centerX}
+          cy={centerY}
+          r={radius}
+          stroke="black"
+          strokeWidth="2"
+          fill="none"
         />
-      ))}
-    </svg>
+
+        {/* Draw triangle */}
+        {showTriangle && (
+          <polygon
+            points={points.map((p) => `${p.x},${p.y}`).join(" ")}
+            stroke="blue"
+            strokeWidth="2"
+            fill="none"
+          />
+        )}
+
+        {/* Draw incircle */}
+        <circle
+          cx={incenter.x}
+          cy={incenter.y}
+          r={inradius}
+          stroke="black"
+          strokeWidth="2"
+          fill="none"
+        />
+
+        {/* Draw points */}
+        {points.map((point, index) => (
+          <circle
+            key={index}
+            cx={point.x}
+            cy={point.y}
+            r={draggingIndex === index ? 8 : hoverIndex === index ? 7 : 5}
+            fill="red"
+            onMouseDown={() => handleMouseDown(index)}
+            onMouseEnter={() => setHoverIndex(index)}
+            onMouseLeave={() => setHoverIndex(null)}
+          />
+        ))}
+      </svg>
+      <div className="text-gray-800">
+        <label>
+          <input
+            type="checkbox"
+            checked={showTriangle}
+            onChange={() => setShowTriangle(!showTriangle)}
+            className="mr-2"
+          />
+          Show Triangle
+        </label>
+      </div>
+    </div>
   );
 };
 
