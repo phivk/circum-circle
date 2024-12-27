@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 
-interface CircleWithTriangleProps {
+interface CircleWithPolygonProps {
   width?: number;
   height?: number;
 }
 
-const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
+const CircleWithPolygon: React.FC<CircleWithPolygonProps> = ({
   width = 400,
   height = 400,
 }) => {
@@ -35,7 +35,7 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   // Control panel state
-  const [showTriangle, setShowTriangle] = useState(true);
+  const [showPolygon, setShowPolygon] = useState(true);
 
   // Handle mouse down event
   const handleMouseDown = (index: number) => {
@@ -123,8 +123,8 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
           fill="none"
         />
 
-        {/* Draw triangle */}
-        {showTriangle && (
+        {/* Draw polygon */}
+        {showPolygon && (
           <polygon
             points={points.map((p) => `${p.x},${p.y}`).join(" ")}
             stroke="blue"
@@ -161,15 +161,15 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
         <label>
           <input
             type="checkbox"
-            checked={showTriangle}
-            onChange={() => setShowTriangle(!showTriangle)}
+            checked={showPolygon}
+            onChange={() => setShowPolygon(!showPolygon)}
             className="mr-2"
           />
-          Show Triangle
+          Show Polygon
         </label>
       </div>
     </div>
   );
 };
 
-export default CircleWithTriangle;
+export default CircleWithPolygon;
