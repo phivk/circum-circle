@@ -2,11 +2,19 @@
 
 import React, { useState } from "react";
 
-const CircleWithTriangle: React.FC = () => {
+interface CircleWithTriangleProps {
+  width?: number;
+  height?: number;
+}
+
+const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
+  width = 400,
+  height = 400,
+}) => {
   // Circle properties
-  const centerX = 200;
-  const centerY = 200;
-  const radius = 150;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = Math.min(width, height) / 2 - 50;
 
   // Calculate initial positions of points
   const initialPoints = [
@@ -63,12 +71,11 @@ const CircleWithTriangle: React.FC = () => {
 
   return (
     <svg
-      width="400"
-      height="400"
+      width={width}
+      height={height}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="bg-slate-100"
     >
       {/* Draw circle */}
       <circle
