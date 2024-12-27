@@ -32,6 +32,7 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
   // State to track point positions
   const [points, setPoints] = useState(initialPoints);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   // Handle mouse down event
   const handleMouseDown = (index: number) => {
@@ -87,18 +88,6 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
         fill="none"
       />
 
-      {/* Draw points */}
-      {points.map((point, index) => (
-        <circle
-          key={index}
-          cx={point.x}
-          cy={point.y}
-          r={5}
-          fill="red"
-          onMouseDown={() => handleMouseDown(index)}
-        />
-      ))}
-
       {/* Draw triangle */}
       <polygon
         points={points.map((p) => `${p.x},${p.y}`).join(" ")}
@@ -106,6 +95,20 @@ const CircleWithTriangle: React.FC<CircleWithTriangleProps> = ({
         strokeWidth="2"
         fill="none"
       />
+
+      {/* Draw points */}
+      {points.map((point, index) => (
+        <circle
+          key={index}
+          cx={point.x}
+          cy={point.y}
+          r={draggingIndex === index ? 8 : hoverIndex === index ? 7 : 5}
+          fill={draggingIndex === index ? "orange" : "red"}
+          onMouseDown={() => handleMouseDown(index)}
+          onMouseEnter={() => setHoverIndex(index)}
+          onMouseLeave={() => setHoverIndex(null)}
+        />
+      ))}
     </svg>
   );
 };
