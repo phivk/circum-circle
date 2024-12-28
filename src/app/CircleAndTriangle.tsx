@@ -73,6 +73,8 @@ const CircleAndTriangle: React.FC<CircleWithTriangleProps> = ({
     setDraggingIndex(null);
   };
 
+  // Incircle //
+
   // Calculate incenter
   const calculateIncenter = () => {
     const [A, B, C] = points;
@@ -103,6 +105,74 @@ const CircleAndTriangle: React.FC<CircleWithTriangleProps> = ({
 
   const incenter = calculateIncenter();
   const inradius = calculateInradius();
+
+  // nine point circle //
+
+  const calculateMidpoints = () => {
+    const [A, B, C] = points;
+    return [
+      { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 },
+      { x: (B.x + C.x) / 2, y: (B.y + C.y) / 2 },
+      { x: (C.x + A.x) / 2, y: (C.y + A.y) / 2 },
+    ];
+  };
+
+  const calculateOrthocenter = () => {
+    const [A, B, C] = points;
+    const mAB = (B.y - A.y) / (B.x - A.x);
+    const mBC = (C.y - B.y) / (C.x - B.x);
+
+    const hA = {
+      x: (B.x + C.x) / 2,
+      y: (B.y + C.y) / 2,
+    };
+    const hB = {
+      x: (A.x + C.x) / 2,
+      y: (A.y + C.y) / 2,
+    };
+
+    const orthocenter = {
+      x:
+        (mAB * mBC * (hA.y - hB.y) +
+          mBC * (hA.x + hB.x) -
+          mAB * (hA.x + hB.x)) /
+        (2 * (mBC - mAB)),
+      y: (hA.y + hB.y) / 2,
+    };
+    return orthocenter;
+  };
+
+  const calculateCircumcenter = () => {
+    const [A, B, C] = points;
+    const D = 2 * (A.x * (B.y - C.y) + B.x * (C.y - A.y) + C.x * (A.y - B.y));
+
+    const Ux =
+      ((A.x ** 2 + A.y ** 2) * (B.y - C.y) +
+        (B.x ** 2 + B.y ** 2) * (C.y - A.y) +
+        (C.x ** 2 + C.y ** 2) * (A.y - B.y)) /
+      D;
+    const Uy =
+      ((A.x ** 2 + A.y ** 2) * (C.x - B.x) +
+        (B.x ** 2 + B.y ** 2) * (A.x - C.x) +
+        (C.x ** 2 + C.y ** 2) * (B.x - A.x)) /
+      D;
+
+    return { x: Ux, y: Uy };
+  };
+
+  const midpoints = calculateMidpoints();
+  const orthocenter = calculateOrthocenter();
+  const circumcenter = calculateCircumcenter();
+
+  const ninePointCenter = {
+    x: (circumcenter.x + orthocenter.x) / 2,
+    y: (circumcenter.y + orthocenter.y) / 2,
+  };
+
+  const ninePointRadius = Math.sqrt(
+    (ninePointCenter.x - midpoints[0].x) ** 2 +
+      (ninePointCenter.y - midpoints[0].y) ** 2
+  );
 
   return (
     <div>
@@ -140,6 +210,15 @@ const CircleAndTriangle: React.FC<CircleWithTriangleProps> = ({
           r={inradius}
           stroke="black"
           strokeWidth="2"
+          fill="none"
+        />
+
+        {/* Draw nine-point circle */}
+        <circle
+          cx={ninePointCenter.x}
+          cy={ninePointCenter.y}
+          r={ninePointRadius}
+          stroke="purple"
           fill="none"
         />
 
