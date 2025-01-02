@@ -36,6 +36,7 @@ const CircleAndTriangle: React.FC<CircleWithTriangleProps> = ({
 
   // Control panel state
   const [showTriangle, setShowTriangle] = useState(true);
+  const [showNinePoint, setShowNinePoint] = useState(false);
 
   // Handle mouse down event
   const handleMouseDown = (index: number) => {
@@ -214,13 +215,15 @@ const CircleAndTriangle: React.FC<CircleWithTriangleProps> = ({
         />
 
         {/* Draw nine-point circle */}
-        <circle
-          cx={ninePointCenter.x}
-          cy={ninePointCenter.y}
-          r={ninePointRadius}
-          stroke="purple"
-          fill="none"
-        />
+        {showNinePoint && (
+          <circle
+            cx={ninePointCenter.x}
+            cy={ninePointCenter.y}
+            r={ninePointRadius}
+            stroke="purple"
+            fill="none"
+          />
+        )}
 
         {/* Draw points */}
         {points.map((point, index) => (
@@ -245,6 +248,15 @@ const CircleAndTriangle: React.FC<CircleWithTriangleProps> = ({
             className="mr-2"
           />
           Show Triangle
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showNinePoint}
+            onChange={() => setShowNinePoint(!showNinePoint)}
+            className="mr-2"
+          />
+          Show 9-Point Circle
         </label>
       </div>
     </div>
